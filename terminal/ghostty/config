@@ -1,0 +1,39 @@
+# This is the configuration file for Ghostty.
+#
+# This template file has been automatically created at the following
+# path since Ghostty couldn't find any existing config files on your system:
+#
+#   ~/Library/Application Support/com.mitchellh.ghostty/config
+#
+
+# Visual goodies
+window-height = 39
+window-width = 155
+
+# Fonts
+font-size = 19
+
+# Themes and color
+#theme = starlight
+#theme = "Ayu Mirage"
+#theme = Raycast_Dark
+#theme = MaterialDarker
+theme = tokyonight-storm
+#theme = ToyChest
+#theme = "Galaxy"
+foreground = #DEFFFF
+#background-image = /Users/dragoscampean/Desktop/rain.jpg 
+cursor-style = underline
+cursor-style-blink = true
+shell-integration-features = no-cursor
+cursor-color = #9AFF9D
+
+# Custom key binds
+keybind = super+alt+left=previous_tab
+keybind = super+alt+right=next_tab
+keybind = super+shift+r=reload_config
+
+auto-update = check
+auto-update-channel = stable
+
+#link-url = (.*\.js).*

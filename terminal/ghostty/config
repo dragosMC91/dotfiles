@@ -14,13 +14,7 @@ window-width = 155
 font-size = 19
 
 # Themes and color
-#theme = starlight
-#theme = "Ayu Mirage"
-#theme = Raycast_Dark
-#theme = MaterialDarker
-theme = tokyonight-storm
-#theme = ToyChest
-#theme = "Galaxy"
+theme = Dracula
 foreground = #DEFFFF
 #background-image = /Users/dragoscampean/Desktop/rain.jpg 
 cursor-style = underline

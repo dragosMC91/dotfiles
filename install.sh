@@ -24,3 +24,6 @@ create_symlink "$SCRIPT_DIR/tmux/.tmux.conf" ~/.tmux.conf
 create_symlink "$SCRIPT_DIR/tmux/scripts/process_path.sh" ~/process_path.sh
 create_symlink "$SCRIPT_DIR/tmux/scripts/start_tmux.sh" ~/start_tmux.sh
 create_symlink "$SCRIPT_DIR/terminal/ghostty/config" ~/Library/Application\ Support/com.mitchellh.ghostty/config
+
+# where symlinks don't work (executing scripts with macos automator), just copy the file
+cp "$SCRIPT_DIR/scripts/sanitize_and_open.js" /usr/local/bin/sanitize_and_open.js

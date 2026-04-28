@@ -10,7 +10,7 @@ export JAVA_11_HOME="/opt/homebrew/opt/openjdk@11/libexec/openjdk.jdk/Contents/H
 
 # my custom aliases
 alias 20='nvm use 20.10.0'
-alias 22='nvm use 22.15.0'
+alias 22='nvm use 22.17.0'
 alias java11='export JAVA_HOME=$JAVA_11_HOME'
 # other useful shortcuts
 alias ask='python applications/start_conversation.py'
@@ -50,3 +50,8 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 # goenv
 eval "$(goenv init -)"
+
+function cb() {
+  git branch --show-current | tr -d '\n' | pbcopy && \
+    echo "Current branch name copied to clipboard!"
+}

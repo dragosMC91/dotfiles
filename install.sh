@@ -27,3 +27,5 @@ create_symlink "$SCRIPT_DIR/terminal/ghostty/config" ~/Library/Application\ Supp
 
 # where symlinks don't work (executing scripts with macos automator), just copy the file
 cp "$SCRIPT_DIR/scripts/sanitize_and_open.js" /usr/local/bin/sanitize_and_open.js
+cp "$SCRIPT_DIR/scripts/tokenmaxx-loop.sh" ~/bin/tokenmaxx-loop.sh
+cp "$SCRIPT_DIR/plist/com.dragos.tokenmaxx.plist" ~/Library/LaunchAgents/com.dragos.tokenmaxx.plist

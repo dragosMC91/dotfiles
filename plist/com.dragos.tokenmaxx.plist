@@ -7,16 +7,16 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>/Users/dragoscampean/bin/tokenmaxx-loop.sh</string>
+        <string>__HOME__/bin/tokenmaxx-loop.sh</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
     <true/>
     <key>StandardOutPath</key>
-    <string>/Users/dragoscampean/Library/Logs/tokenmaxx.log</string>
+    <string>__HOME__/Library/Logs/tokenmaxx.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/dragoscampean/Library/Logs/tokenmaxx.err.log</string>
+    <string>__HOME__/Library/Logs/tokenmaxx.err.log</string>
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>

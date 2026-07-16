@@ -14,7 +14,7 @@
 #   export EDITOR_CMD="code"   # VS Code (default)
 #   export EDITOR_CMD="cursor" # Cursor
 #   export EDITOR_CMD="subl"   # Sublime Text
-EDITOR_CMD="${EDITOR_CMD:-code}"
+EDITOR_CMD="${EDITOR_CMD:-cursor}"
 
 # Debug function that only prints to console when DEBUG is set
 # or shows it in the status bar when in a tmux context
@@ -57,7 +57,8 @@ process_path() {
     local status="File found"
 
     # Extract the path using grep and regular expressions
-    path=$(echo "$multiline_string" | grep -oE "(file:///)?(\.{0,2}/[^[:space:]\"]+|/[^[:space:]\"]+|\w+:\/\/[^[:space:]\"]+)|www\.[^[:space:]\"]+")
+    # Put e2e/... before a bare /... so the match starts at e2e, not at / within e2e/foo/...
+    path=$(echo "$multiline_string" | grep -oE "(file:///)?(\.{0,2}/[^[:space:]\"]+|e2e/[a-zA-Z0-9_./-]+(:[0-9]+(:[0-9]+)?)?|/[^[:space:]\"]+|\w+:\/\/[^[:space:]\"]+)|www\.[^[:space:]\"]+")
 
     if [[ -z "$path" ]]; then
         echo "No path found"
@@ -72,9 +73,23 @@ process_path() {
         suffix=""
     fi
 
+    # Strip a bare trailing colon (no line number after it)
+    path="${path%:}"
+
     # Handle file:/// prefix paths
     if [[ "$path" =~ ^file:/// ]]; then
         path="${path#file://}"
+    fi
+
+    # Paths relative to E2E_PATH (e.g. e2e/... in bracket test output, or file:///e2e/...).
+    if [[ "$path" =~ ^(/)?e2e/ ]]; then
+        local e2e_path="${E2E_PATH}"
+        if [[ "$path" =~ ^/e2e/ ]]; then
+            path="${e2e_path}${path}"
+        else
+            path="${e2e_path}/${path}"
+        fi
+        path=$(normalize_path "$path")
     fi
 
     # Handle relative paths starting with . or ..
@@ -151,8 +166,10 @@ if [[ "$path" == "run tests" ]]; then
         fi
     }
     # Create dummy files and folders for testing
-    mkdir -p /tmp/some/path/touch
+    mkdir -p /tmp/some/path/touch /tmp/some/e2e
     touch /tmp/some/path/image.png /tmp/some/path/doc.pdf /tmp/some/path/config.yaml /tmp/some/path/dummy_file.ext /tmp/some/path/dummy_file.py
+    touch /tmp/some/e2e/e2e_spec.js
+    export E2E_PATH="/tmp/some"
     pushd /tmp/some/
     run_test "No path found" "Some random input" "." "No path found"
     run_test "File not found" "/absolute/path/to/file" "." "default|/absolute/path/to/file|File not found"
@@ -182,6 +199,9 @@ if [[ "$path" == "run tests" ]]; then
     run_test "YAML config file as code" "/tmp/some/path/config.yaml" "/tmp/some" "code|/tmp/some/path/config.yaml|File found"
     run_test "JavaScript file as code" "/tmp/some/path/app.js" "/tmp/some" "code|/tmp/some/path/app.js|File not found"
     run_test "TypeScript JSX file as code" "/tmp/some/path/Component.tsx" "/tmp/some" "code|/tmp/some/path/Component.tsx|File not found"
+    run_test "Absolute code path with trailing colon and no line number" "/tmp/some/path/dummy_file.py:" "/tmp/some" "code|/tmp/some/path/dummy_file.py|File found"
+    run_test "e2e/ path under maple frontend (bracket output)" "╭─[e2e/e2e_spec.js:4:10]" "/tmp/some" "code|/tmp/some/e2e/e2e_spec.js:4:10|File found"
+    run_test "e2e/ path file:// with leading slash from file URL" "file:///e2e/e2e_spec.js:2:3" "/tmp/some" "code|/tmp/some/e2e/e2e_spec.js:2:3|File found"
     # Cleanup after testing done
     popd
     rm -f /tmp/some/path/dummy_file.ext /tmp/some/path/dummy_file.py /tmp/some/path/image.png /tmp/some/path/doc.pdf /tmp/some/path/config.yaml
@@ -201,11 +221,11 @@ else
     elif [[ "$type" == "url" ]]; then
         if [[ "$path" =~ ^www\. ]]; then
             debug "Detected www URL - adding https:// prefix and opening in Chrome"
-            open -a "Google Chrome" "https://$path"
+            open -a "Helium" "https://$path"
             exit 0
         else
             debug "Detected HTTP/HTTPS URL - opening in Chrome"
-            open -a "Google Chrome" "$path"
+            open -a "Helium" "$path"
             exit 0
         fi
     elif [[ "$type" == "code" ]]; then

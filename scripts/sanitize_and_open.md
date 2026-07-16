@@ -31,9 +31,11 @@ This script can be tested independently, so ideally add unit tests for it.
 
 ```sh
 export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
-sanitized=$(/path/to/.nvm/versions/node/v20.10.0/bin/node /usr/local/bin/sanitize_and_open.js "$1" 2>> /tmp/automator-debug.log)
+sanitized=$(/Users/myuser/.nvm/versions/node/v20.10.0/bin/node /usr/local/bin/sanitize_and_open.js "$1" 2>> /tmp/automator-debug.log)
 echo "Sanitized: $sanitized" >> /tmp/automator-debug.log 2>&1
-cursor "$sanitized" >> /tmp/automator-debug.log 2>&1
+cursor -g "$sanitized" >> /tmp/automator-debug.log 2>&1 &
+# processes remain open and eat up resources
+pkill -9 -f 'automator.runner'
 ```
 
 Notice the `sanitize_and_open.js` script is under `/usr/local/bin/` so make sure to make a copy there (symlink won't work on mac).

@@ -2,6 +2,7 @@
 
 Everything you need to install **before** running `./install.sh` or using the scripts in this repo.
 Target: **macOS on Apple Silicon (arm64)**. Homebrew lives at `/opt/homebrew` on this arch — a few scripts assume that path.
+`install.sh` also runs on **Linux**, where it offers only the cross-platform items — see [Linux](#linux).
 
 ## 1. Homebrew
 
@@ -61,7 +62,7 @@ uv sync                  # install locked deps into the venv
 > ```sh
 > export PATH="$HOME/.local/bin:$PATH"   # add to ~/.zshrc to persist
 > ```
-> This repo's `.zshrc` already sets it, so once `install.sh` is done the warning goes away.
+> This repo's `shell/.zshrc` already sets it. `install.sh` does not link `.zshrc`, so copy or source it yourself for the warning to go away.
 
 ## 3. Terminal — Ghostty (`terminal/ghostty/config`)
 
@@ -82,6 +83,8 @@ brew install tmux lazygit
   - **python3** — `brew install python3` (path normalization; falls back gracefully if missing).
   - An **editor CLI** — defaults to `cursor`; override with `EDITOR_CMD` (`code`, `subl`, …). See §5.
   - **Helium** browser — URLs are opened with `open -a "Helium"`. Install it, or edit the script to use your browser (e.g. `Safari`, `Google Chrome`).
+  - **`E2E_PATH`** — export it to the maple frontend checkout (e.g. `export E2E_PATH="$HOME/Documents/maple/frontend"`) so `e2e-pw/...` paths in test output resolve from any pane. The repo's `shell/.zshrc` does not set it.
+  - URLs, images, documents and media are opened with macOS `open`, so only code files open on Linux.
 
 ## 5. Editor CLI — Cursor / VS Code
 
@@ -116,7 +119,47 @@ brew install --cask raycast
 - **Raycast** — bind the shortcut to a hotkey.
 - Grant **Accessibility** + **Screen Recording** permissions to the Shortcuts app (System Settings → Privacy & Security).
 
-## 8. tokenmaxx loop (`scripts/tokenmaxx-loop.sh`, `plist/*`)
+## 8. Screen recording (native, no script)
+
+Unlike screenshots, there is no scriptable region-select video capture: `screencapture`
+records only the full screen for video (`-i` is rejected with "video not valid with -i").
+The built-in recorder is the right tool and already covers everything a script would.
+
+- Trigger with **Cmd+Shift+5** (or rebind it in System Settings → Keyboard → Keyboard
+  Shortcuts → Screenshots).
+- Click **Record Selected Portion**, drag the region, **Record**, stop from the menu bar.
+- In the toolbar's **Options** menu (set once): **Save to** → `~/Downloads/recordings`,
+  enable **Show Mouse Clicks**, keep **Remember Last Selection**.
+- The floating thumbnail after recording opens the clip for quick trim / share.
+
+### Auto-reveal in Finder after saving
+
+An Automator **Folder Action** on `~/Downloads/recordings` opens Finder to the new clip as
+soon as it is saved. Folder Actions run inside the GUI login session, so `open` reliably
+surfaces Finder — a launchd `WatchPaths` agent does **not** work here (it fires outside the
+GUI session / on another Space, so the reveal never becomes visible; this was tried and
+abandoned).
+
+Set it up (all in Automator, no terminal):
+
+1. Open **Automator** → **File → New** → **Folder Action** → Choose.
+2. Top of the workflow: *"Folder Action receives files and folders added to"* → dropdown →
+   **Other…** → select `~/Downloads/recordings`.
+3. Search the actions list for **Run Shell Script**, drag it into the workflow.
+4. Set **Shell:** `/bin/zsh`, **Pass input:** `as arguments`, and use this body:
+   ```bash
+   open -R "$1"      # reveal + select the new recording in Finder
+   open -a Finder    # force Finder to the front, even from a fullscreen Space
+   ```
+5. **⌘S**, name it e.g. "Reveal Recording".
+
+On first trigger macOS asks to allow controlling Finder — approve it. After that, every
+recording saved into the folder pops Finder to the front with the clip selected.
+
+> Folder Actions live in `~/Library/Workflows/Applications/Folder Actions/`, outside this
+> repo, so this one is a manual setup step rather than something `install.sh` provisions.
+
+## 9. tokenmaxx loop (`scripts/tokenmaxx-loop.sh`, `plist/*`)
 
 Drives a Claude Code session inside tmux on a timer via `launchd`.
 
@@ -127,7 +170,7 @@ brew install --cask claude-code    # or: npm install -g @anthropic-ai/claude-cod
 
 Requires **tmux** (§4) and an authenticated `claude` login. Managed with `launchctl` — see `plist/tokenmaxx.md`.
 
-## 9. Automator quick action (`scripts/sanitize_and_open.*`)
+## 10. Automator quick action (`scripts/sanitize_and_open.*`)
 
 **Automator** is built into macOS — no install. Follow `scripts/sanitize_and_open.md` to create the Quick Action and assign a keyboard shortcut. Needs Node (§6) and an editor CLI (§5).
 
@@ -143,12 +186,40 @@ brew install --cask ghostty cursor raycast claude-code
 
 ## Run the installer
 
-Once the above is in place, symlink/copy all configs into place:
+Once the above is in place, symlink/copy configs into place:
 
 ```sh
-./install.sh
+./install.sh        # pick items in a checkbox menu
+./install.sh --all  # install every item offered on this OS, no menu
 ```
 
-`install.sh` creates symlinks for the shell, tmux, and Ghostty configs, and copies the
-sanitize script, tokenmaxx loop, and LaunchAgent plist to their runtime locations.
-It also expects `~/bin` to exist (`mkdir -p ~/bin`) for the tokenmaxx copy target.
+The menu starts with every item ticked: ↑/↓ (or `j`/`k`) move, space toggles, `a` toggles all,
+enter installs, `q` quits without installing. When stdin or stdout is not a terminal (piped, CI),
+the menu is skipped and everything is installed.
+
+| Item | Installs | OS |
+|------|----------|----|
+| tmux config | symlinks `~/.tmux.conf` | macOS, Linux |
+| process_path.sh | symlinks `~/process_path.sh` (the `.tmux.conf` copy-mode `o` binding calls it) | macOS, Linux |
+| start_tmux.sh | symlinks `~/start_tmux.sh` | macOS, Linux |
+| wf-cli | symlinks `~/bin/wf-cli` (the `wf-ci` link and `.zshrc` line from `scripts/wf-cli.md` stay manual) | macOS, Linux |
+| Ghostty | symlinks the config into `~/Library/Application Support/com.mitchellh.ghostty/` | macOS |
+| sanitize_and_open | copies `sanitize_and_open.js` to `/usr/local/bin` (uses `sudo` if not writable) | macOS |
+| tokenmaxx | copies `~/bin/tokenmaxx-loop.sh`; on macOS also installs and loads the LaunchAgent | macOS, Linux |
+
+Existing files are backed up to `<target>.bak.<timestamp>` before being replaced. Missing parent
+directories (e.g. `~/bin`) are created. The shell configs (`.zshrc`, `.p10k.zsh`) are not installed.
+
+## Linux
+
+`install.sh` itself needs only `git` (to clone), `bash` and the standard coreutils, plus:
+
+- `cmp` (`diffutils`) — without it the tokenmaxx copy is backed up and re-copied on every run.
+- `tput` (`ncurses`) — optional; only hides the cursor while the menu is open.
+
+The installed items need:
+
+- **tmux config** — `tmux` (and `lazygit` for `prefix + g`).
+- **process_path.sh** — `python3`, an editor CLI (§5) and `E2E_PATH` (§4). Only code files open.
+- **wf-cli** — `uv`, `git`, `gh` and `zsh` (see `scripts/wf-cli.md`). The `env -S` shebang needs coreutils 8.30+.
+- **tokenmaxx** — `tmux` and an authenticated `claude`. There is no LaunchAgent on Linux, so nothing starts the loop.

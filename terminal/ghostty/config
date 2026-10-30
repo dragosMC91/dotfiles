@@ -12,15 +12,21 @@ window-width = 155
 
 # Fonts
 font-size = 19
+font-family = "MesloLGS NF"
 
 # Themes and color
 theme = Dracula
 foreground = #DEFFFF
 #background-image = /Users/dragoscampean/Desktop/rain.jpg 
-cursor-style = underline
+cursor-style = bar
 cursor-style-blink = true
+cursor-click-to-move = true
 shell-integration-features = no-cursor
-cursor-color = #9AFF9D
+cursor-color = #50FA7B
+adjust-cursor-thickness = 400%
+adjust-cursor-height = 40%
+
+middle-click-action = ignore
 
 # Custom key binds
 keybind = super+alt+left=previous_tab

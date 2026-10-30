@@ -16,8 +16,10 @@ The bash script then:
 - Saves the PNG to `~/Downloads/screenshots/` with a timestamp filename.
 - Opens it in Preview and activates the annotation toolbar (Cmd+Shift+A).
 - Waits for Preview to close (user annotates and saves with Cmd+S, then closes).
-- Copies the final image to the clipboard.
+- Copies the final image to the clipboard in two flavors at once: a **file reference** (`furl`, like Finder's "Copy") and the **PNG bitmap** (`public.png`). The file reference lets it paste as a path in terminals that can't receive image bitmaps (e.g. Claude Code in Ghostty, which lacks the OSC 5522 image-transport protocol), while the bitmap keeps inline-image paste working in native apps like Slack.
 - If the screenshot step was cancelled (empty file), cleans up and exits silently.
+
+> Note: there is a ~1s gap after you close Preview before the clipboard is updated (the copy step loads the AppKit framework via `osascript`). Pasting immediately can yield the previous image — wait a beat.
 
 ## Setup
 

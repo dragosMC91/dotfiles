@@ -57,8 +57,8 @@ process_path() {
     local status="File found"
 
     # Extract the path using grep and regular expressions
-    # Put e2e/... before a bare /... so the match starts at e2e, not at / within e2e/foo/...
-    path=$(echo "$multiline_string" | grep -oE "(file:///)?(\.{0,2}/[^[:space:]\"]+|e2e/[a-zA-Z0-9_./-]+(:[0-9]+(:[0-9]+)?)?|/[^[:space:]\"]+|\w+:\/\/[^[:space:]\"]+)|www\.[^[:space:]\"]+")
+    # Put e2e-pw/... before a bare /... so the match starts at e2e-pw, not at / within e2e-pw/foo/...
+    path=$(echo "$multiline_string" | grep -oE "(file:///)?(\.{0,2}/[^[:space:]\"]+|e2e-pw/[a-zA-Z0-9_./-]+(:[0-9]+(:[0-9]+)?)?|/[^[:space:]\"]+|\w+:\/\/[^[:space:]\"]+)|www\.[^[:space:]\"]+")
 
     if [[ -z "$path" ]]; then
         echo "No path found"
@@ -81,10 +81,10 @@ process_path() {
         path="${path#file://}"
     fi
 
-    # Paths relative to E2E_PATH (e.g. e2e/... in bracket test output, or file:///e2e/...).
-    if [[ "$path" =~ ^(/)?e2e/ ]]; then
+    # Paths relative to E2E_PATH (e.g. e2e-pw/... in bracket test output, or file:///e2e-pw/...).
+    if [[ "$path" =~ ^(/)?e2e-pw/ ]]; then
         local e2e_path="${E2E_PATH}"
-        if [[ "$path" =~ ^/e2e/ ]]; then
+        if [[ "$path" =~ ^/e2e-pw/ ]]; then
             path="${e2e_path}${path}"
         else
             path="${e2e_path}/${path}"
@@ -166,9 +166,9 @@ if [[ "$path" == "run tests" ]]; then
         fi
     }
     # Create dummy files and folders for testing
-    mkdir -p /tmp/some/path/touch /tmp/some/e2e
+    mkdir -p /tmp/some/path/touch /tmp/some/e2e-pw
     touch /tmp/some/path/image.png /tmp/some/path/doc.pdf /tmp/some/path/config.yaml /tmp/some/path/dummy_file.ext /tmp/some/path/dummy_file.py
-    touch /tmp/some/e2e/e2e_spec.js
+    touch /tmp/some/e2e-pw/e2e_spec.js
     export E2E_PATH="/tmp/some"
     pushd /tmp/some/
     run_test "No path found" "Some random input" "." "No path found"
@@ -200,8 +200,8 @@ if [[ "$path" == "run tests" ]]; then
     run_test "JavaScript file as code" "/tmp/some/path/app.js" "/tmp/some" "code|/tmp/some/path/app.js|File not found"
     run_test "TypeScript JSX file as code" "/tmp/some/path/Component.tsx" "/tmp/some" "code|/tmp/some/path/Component.tsx|File not found"
     run_test "Absolute code path with trailing colon and no line number" "/tmp/some/path/dummy_file.py:" "/tmp/some" "code|/tmp/some/path/dummy_file.py|File found"
-    run_test "e2e/ path under maple frontend (bracket output)" "╭─[e2e/e2e_spec.js:4:10]" "/tmp/some" "code|/tmp/some/e2e/e2e_spec.js:4:10|File found"
-    run_test "e2e/ path file:// with leading slash from file URL" "file:///e2e/e2e_spec.js:2:3" "/tmp/some" "code|/tmp/some/e2e/e2e_spec.js:2:3|File found"
+    run_test "e2e-pw/ path under maple frontend (bracket output)" "╭─[e2e-pw/e2e_spec.js:4:10]" "/tmp/some" "code|/tmp/some/e2e-pw/e2e_spec.js:4:10|File found"
+    run_test "e2e-pw/ path file:// with leading slash from file URL" "file:///e2e-pw/e2e_spec.js:2:3" "/tmp/some" "code|/tmp/some/e2e-pw/e2e_spec.js:2:3|File found"
     # Cleanup after testing done
     popd
     rm -f /tmp/some/path/dummy_file.ext /tmp/some/path/dummy_file.py /tmp/some/path/image.png /tmp/some/path/doc.pdf /tmp/some/path/config.yaml

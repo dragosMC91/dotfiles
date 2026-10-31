@@ -7,11 +7,12 @@ as a set of user-level systemd services, so it's per-user and works on both X11 
 Audited **2026-07-26** on CachyOS / KDE Plasma (Wayland). Config file `2026.06.21`,
 keymapper `xwaykeyz 1.23.3`.
 
-## TL;DR — one custom keymap, everything else default
+## TL;DR — two small custom keymaps, everything else default
 
-Every preference toggle is at Toshy's shipped default. The only customization is a Magnet-style
-window-snapping keymap (see [My custom keymaps](#my-custom-keymaps-window-snapping)). On a new
-distro: install Toshy, enable its services, then paste that keymap back in.
+Every preference toggle is at Toshy's shipped default. The only customizations are a Magnet-style
+window-snapping keymap and arrow-key navigation in the Cmd+Tab switcher (see the two
+"My custom keymaps" sections). On a new distro: install Toshy, enable its services, then paste
+those back in.
 
 ## Where Toshy settings can live
 
@@ -101,6 +102,43 @@ The user slices survive Toshy upgrades. Check what differs from the shipped conf
 
 ```sh
 diff ~/.config/toshy/default-toshy-config/toshy_config.py ~/.config/toshy/toshy_config.py
+```
+
+## My custom keymaps: arrow keys in the Cmd+Tab switcher
+
+Like macOS: hold Cmd, press Tab to open the switcher, then move with the **arrow keys** (not just
+repeated Tab). KDE's switcher supports arrows natively; Toshy was breaking it. While Cmd+Tab is
+held, Toshy keeps Alt pressed for KDE. But Cmd+Left/Right/Up/Down are remapped to Home/End/
+Ctrl+Home/Ctrl+End, and sending those releases Alt, which closes the switcher.
+
+The fix sends Alt+arrow instead, only while the switcher is open. "Open" is detected through
+xwaykeyz's internal `_sticky` table, which ties Cmd (Right Ctrl) to a held Left Alt until Cmd is
+released. That's a private keymapper detail, so if this stops working after a Toshy upgrade,
+check it first.
+
+Paste into the `user_custom_functions` slice:
+
+```python
+import xwaykeyz.transform as _xwk_transform
+
+def user_task_switcher_open():
+    """True while Cmd+Tab / Cmd+` holds the KDE task switcher open.
+    Toshy's `bind` sticks Cmd (RIGHT_CTRL) to a held LEFT_ALT until Cmd is released."""
+    return _xwk_transform._sticky.get(Key.RIGHT_CTRL) == Key.LEFT_ALT
+```
+
+And into the `user_apps` slice (above the snapping keymap):
+
+```python
+keymap("User - Cmd+Tab switcher arrow navigation", {
+    C("RC-Left"):               C("Alt-Left"),
+    C("RC-Right"):              C("Alt-Right"),
+    C("RC-Up"):                 C("Alt-Up"),
+    C("RC-Down"):               C("Alt-Down"),
+}, when = lambda ctx:
+    cnfg.screen_has_focus and
+    user_task_switcher_open()
+)
 ```
 
 ## Services enabled on this machine

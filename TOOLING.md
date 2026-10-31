@@ -225,3 +225,5 @@ The installed items need:
 - **tokenmaxx** — `tmux` and an authenticated `claude`. There is no LaunchAgent on Linux, so nothing starts the loop.
 
 Mouse DPI (Logitech G502 X via Piper, incl. the `ratbagd` commands) — see `linux/g502x-piper.md`.
+
+BIOS setup for booting CachyOS with Resizable BAR (CSM, Above 4G, Fast Boot on the ASUS TUF X570-PLUS) — see `linux/bios-csm-resizable-bar.md`.

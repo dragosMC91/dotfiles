@@ -29,9 +29,16 @@ adjust-cursor-height = 40%
 middle-click-action = ignore
 
 # Custom key binds
+keybind = super+t=new_tab
 keybind = super+alt+left=previous_tab
 keybind = super+alt+right=next_tab
 keybind = super+shift+r=reload_config
+
+# Linux + Toshy: in terminals Toshy sends Cmd (physical Alt) as Ctrl and Opt (physical Win) as Alt,
+# so the super+... binds above arrive as ctrl+...
+keybind = ctrl+alt+arrow_left=previous_tab
+keybind = ctrl+alt+arrow_right=next_tab
+keybind = ctrl+shift+r=reload_config
 
 auto-update = check
 auto-update-channel = stable

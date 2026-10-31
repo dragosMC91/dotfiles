@@ -142,8 +142,14 @@ install_wf_cli() {
     create_symlink "$SCRIPT_DIR/scripts/wf-cli/wf-cli" ~/bin/wf-cli
 }
 
+# On Linux, link to config.ghostty (the default name since Ghostty 1.2) so a
+# second config file isn't loaded alongside it.
 install_ghostty() {
-    create_symlink "$SCRIPT_DIR/terminal/ghostty/config" ~/Library/Application\ Support/com.mitchellh.ghostty/config
+    if is_macos; then
+        create_symlink "$SCRIPT_DIR/terminal/ghostty/config" ~/Library/Application\ Support/com.mitchellh.ghostty/config
+    else
+        create_symlink "$SCRIPT_DIR/terminal/ghostty/config" ~/.config/ghostty/config.ghostty
+    fi
 }
 
 # Copied, not symlinked: symlinks don't work when macOS Automator executes scripts.
@@ -176,8 +182,8 @@ add_item install_tmux_conf "tmux config (~/.tmux.conf)"
 add_item install_process_path "process_path.sh (tmux copy-mode o)"
 add_item install_start_tmux "start_tmux.sh"
 add_item install_wf_cli "wf-cli (~/bin)"
+add_item install_ghostty "Ghostty config"
 if is_macos; then
-    add_item install_ghostty "Ghostty config"
     add_item install_sanitize_and_open "sanitize_and_open.js (Automator, /usr/local/bin)"
     add_item install_tokenmaxx "tokenmaxx loop + launch agent"
 else

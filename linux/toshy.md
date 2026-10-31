@@ -7,11 +7,11 @@ as a set of user-level systemd services, so it's per-user and works on both X11 
 Audited **2026-07-26** on CachyOS / KDE Plasma (Wayland). Config file `2026.06.21`,
 keymapper `xwaykeyz 1.23.3`.
 
-## TL;DR — I have not customized anything
+## TL;DR — one custom keymap, everything else default
 
-Every setting is at Toshy's shipped default. The Mac-like behavior comes entirely from Toshy's
-out-of-the-box config, so porting to another distro needs **no config restore at all** — just
-install Toshy and enable its services.
+Every preference toggle is at Toshy's shipped default. The only customization is a Magnet-style
+window-snapping keymap (see [My custom keymaps](#my-custom-keymaps-window-snapping)). On a new
+distro: install Toshy, enable its services, then paste that keymap back in.
 
 ## Where Toshy settings can live
 
@@ -20,7 +20,7 @@ Only two places:
 | What | Where |
 | --- | --- |
 | Toggles from the tray icon / Preferences GUI | `~/.config/toshy/toshy_user_preferences.sqlite`, table `config_preferences` |
-| Hand-written keymaps / modmaps | the `SLICE_MARK_START: user_custom_*` regions of `~/.config/toshy/toshy_config.py` (only these regions survive an upgrade) |
+| Hand-written keymaps / modmaps | the `SLICE_MARK_START: user_*` regions of `~/.config/toshy/toshy_config.py`, e.g. `user_apps` for keymaps (only these regions survive an upgrade) |
 
 Everything else under `~/.config/toshy/` is the upstream repo checkout, replaced on reinstall.
 
@@ -59,14 +59,48 @@ browser shortcuts, VSCode shortcuts, dialog ergo, Level3 left-Alt.
 (The DB's other table, `mru_layouts`, is just a rolling cache of the last 12 detected keyboard
 layouts — not a setting.)
 
-## My custom keymaps: none
+## My custom keymaps: window snapping
 
-`~/.config/toshy/toshy_config.py` is byte-identical to the shipped default, so the
-`user_custom_lists`, `user_custom_functions` and `user_custom_modmaps` slices are empty:
+macOS used Magnet with Ctrl+Opt+arrows/Enter. KDE's KWin already has the snapping ("Quick Tile",
+default `Meta+Left/Right/Up/Down`, maximize toggle `Meta+PgUp`), so this keymap only translates the
+Mac muscle memory into those KWin shortcuts. On a PC keyboard that's **Ctrl + Win + key**:
+
+| Keys | Action |
+| --- | --- |
+| Ctrl+Win+Left / Right | left / right half |
+| Ctrl+Win+Up / Down | top / bottom half |
+| Ctrl+Win+Enter | maximize (press again to restore) |
+
+Why it lives in Toshy and not in KWin's shortcut settings: Toshy remaps modifiers per app before
+KWin sees them. Physical Ctrl becomes Super in GUI apps but stays Left Ctrl in terminals, and Ghostty
+can't tell that Left Ctrl from Cmd (Right Ctrl), which its `ctrl+alt+arrow` tab binds rely on. Matching
+`LC-` in Toshy keeps Cmd+Opt+arrows free for Ghostty/browser tab switching.
+
+Paste this into the `user_apps` slice of `~/.config/toshy/toshy_config.py`, above
+`keymap("User hardware keys", ...)`, then run `toshy-services-restart`:
+
+```python
+keymap("User - Magnet-style window snapping", {
+    C("Super-Alt-Left"):        C("Super-Left"),                # Left half
+    C("Super-Alt-Right"):       C("Super-Right"),               # Right half
+    C("Super-Alt-Up"):          C("Super-Up"),                  # Top half
+    C("Super-Alt-Down"):        C("Super-Down"),                # Bottom half
+    C("Super-Alt-Enter"):       C("Super-Page_Up"),             # Maximize (toggle)
+    C("LC-Alt-Left"):           C("Super-Left"),                # Left half (terminals)
+    C("LC-Alt-Right"):          C("Super-Right"),               # Right half (terminals)
+    C("LC-Alt-Up"):             C("Super-Up"),                  # Top half (terminals)
+    C("LC-Alt-Down"):           C("Super-Down"),                # Bottom half (terminals)
+    C("LC-Alt-Enter"):          C("Super-Page_Up"),             # Maximize (terminals)
+}, when = lambda ctx:
+    cnfg.screen_has_focus and
+    not ctx_app_is_remote
+)
+```
+
+The user slices survive Toshy upgrades. Check what differs from the shipped config with:
 
 ```sh
-diff -q ~/.config/toshy/default-toshy-config/toshy_config.py \
-        ~/.config/toshy/toshy_config.py      # exit 0 == unmodified
+diff ~/.config/toshy/default-toshy-config/toshy_config.py ~/.config/toshy/toshy_config.py
 ```
 
 ## Services enabled on this machine

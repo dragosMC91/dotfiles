@@ -223,3 +223,5 @@ The installed items need:
 - **process_path.sh** — `python3`, an editor CLI (§5) and `E2E_PATH` (§4). Only code files open.
 - **wf-cli** — `uv`, `git`, `gh` and `zsh` (see `scripts/wf-cli.md`). The `env -S` shebang needs coreutils 8.30+.
 - **tokenmaxx** — `tmux` and an authenticated `claude`. There is no LaunchAgent on Linux, so nothing starts the loop.
+
+Mouse DPI (Logitech G502 X via Piper, incl. the `ratbagd` commands) — see `linux/g502x-piper.md`.

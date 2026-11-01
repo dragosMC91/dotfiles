@@ -7,11 +7,11 @@ as a set of user-level systemd services, so it's per-user and works on both X11 
 Audited **2026-07-26** on CachyOS / KDE Plasma (Wayland). Config file `2026.06.21`,
 keymapper `xwaykeyz 1.23.3`.
 
-## TL;DR — two small custom keymaps, everything else default
+## TL;DR — three small custom keymaps, everything else default
 
 Every preference toggle is at Toshy's shipped default. The only customizations are a Magnet-style
-window-snapping keymap and arrow-key navigation in the Cmd+Tab switcher (see the two
-"My custom keymaps" sections). On a new distro: install Toshy, enable its services, then paste
+window-snapping keymap, arrow-key navigation in the Cmd+Tab switcher and Ctrl+Up for Mission
+Control (see the three "My custom keymaps" sections). On a new distro: install Toshy, enable its services, then paste
 those back in.
 
 ## Where Toshy settings can live
@@ -140,6 +140,39 @@ keymap("User - Cmd+Tab switcher arrow navigation", {
     user_task_switcher_open()
 )
 ```
+
+## My custom keymaps: Ctrl+Up opens Mission Control (KDE Overview)
+
+On macOS, Ctrl+Up opens Mission Control, and the G502 X has a macro button stored on the mouse
+that sends exactly that (see [g502x-piper.md](g502x-piper.md)). Without this keymap, on Linux it
+snapped the focused window to the top half: Toshy grabs the mouse's keyboard interface too, turns
+physical Ctrl into Super in GUI apps, and KWin's default for Meta+Up is "Quick Tile Window to the
+Top". KDE's Mission Control equivalent is Overview, default `Meta+W` (Grid View is `Meta+G`).
+
+Paste into the `user_apps` slice, after the snapping keymap and above `keymap("User hardware keys", ...)`:
+
+```python
+# Mac Ctrl+Up (Mission Control) -> KDE Overview. Physical Ctrl is Super in GUI apps but
+# stays Left Ctrl in terminals, so match both. Also catches the G502 X macro button.
+keymap("User - Mission Control", {
+    C("Super-Up"):              C("Super-w"),                   # Overview
+    C("LC-Up"):                 C("Super-w"),                   # Overview (terminals)
+}, when = lambda ctx:
+    cnfg.screen_has_focus and
+    not ctx_app_is_remote
+)
+```
+
+- The keyboard's Ctrl+Up opens Overview too, same as on the Mac.
+- It doesn't affect snapping: that keymap matches Super+Alt+Up and sends Meta+Up, and Toshy's
+  output isn't run back through its keymaps.
+- In terminals physical Ctrl stays Left Ctrl, so the `Super-Up` line alone never fires there
+  (the button did nothing in Ghostty). The `LC-Up` line covers that, like the snapping keymap
+  does. Nothing in Ghostty or tmux uses Ctrl+Up, and `LC` keeps Cmd+Up (Right Ctrl) untouched.
+- The mouse profile doesn't need changing, so the same button works on both machines.
+- Overview is a toggle: pressing twice quickly opens and closes it, which looks like nothing happened.
+- If it does nothing at all, give Toshy a few seconds after `toshy-services-restart`, then run
+  `toshy-services-log` and press the button to see what goes in and what comes out.
 
 ## Services enabled on this machine
 

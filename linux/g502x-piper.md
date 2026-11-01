@@ -51,3 +51,7 @@ DPI in Piper, then go back to wireless.
 Onboard memory travels with the mouse, so the DPI set here also applies on the Mac unless
 G HUB is running there in software mode (G HUB then applies its own profile and ignores the
 onboard DPI). Without G HUB, compensate with the macOS tracking speed instead.
+
+The macro button that sends Ctrl+Up (Mission Control on the Mac) needs a Toshy remap to open KDE's
+Overview instead of snapping the window to the top half. See "Ctrl+Up opens Mission Control" in
+[toshy.md](toshy.md).

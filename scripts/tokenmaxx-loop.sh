@@ -1,8 +1,8 @@
 #!/bin/bash
 # tokenmaxx-loop.sh
 # Runs the tokenmaxx cycle on a random 30min-1h cadence, measured in WALL-CLOCK time.
-# Because the deadline is real-clock based and we poll every 15s, the cycle fires
-# right after the mac wakes if the interval elapsed while it was asleep.
+# Because the deadline is real-clock based and we poll every 5min, the cycle fires
+# within 5min after the mac wakes if the interval elapsed while it was asleep.
 # Managed by ~/Library/LaunchAgents/com.dragos.tokenmaxx.plist
 
 # script assumes a tmux session called "claude" is running with a window called "tokenmaxx"
@@ -71,10 +71,12 @@ run_cycle() {
 next=0  # 0 => run immediately on first start
 while true; do
   now=$(date +%s)
-  if [ "$now" -ge "$next" ]; then
+  # wait for the tmux target (e.g. at login, before tmux is started) instead of
+  # firing into nothing and then sleeping 30min-1h
+  if [ "$now" -ge "$next" ] && tmux has-session -t "$TARGET" 2>/dev/null; then
     run_cycle
     # schedule the next run a random 30min (1800s) to 1h (3600s) from now
     next=$(( $(date +%s) + 1800 + RANDOM % 1801 ))
   fi
-  sleep 15
+  sleep 300
 done

@@ -81,9 +81,9 @@ process_path() {
         path="${path#file://}"
     fi
 
-    # Paths relative to E2E_PATH (e.g. e2e-pw/... in bracket test output, or file:///e2e-pw/...).
+    # Paths relative to SANITIZE_E2E_PATH (e.g. e2e-pw/... in bracket test output, or file:///e2e-pw/...).
     if [[ "$path" =~ ^(/)?e2e-pw/ ]]; then
-        local e2e_path="${E2E_PATH}"
+        local e2e_path="${SANITIZE_E2E_PATH}"
         if [[ "$path" =~ ^/e2e-pw/ ]]; then
             path="${e2e_path}${path}"
         else
@@ -169,7 +169,7 @@ if [[ "$path" == "run tests" ]]; then
     mkdir -p /tmp/some/path/touch /tmp/some/e2e-pw
     touch /tmp/some/path/image.png /tmp/some/path/doc.pdf /tmp/some/path/config.yaml /tmp/some/path/dummy_file.ext /tmp/some/path/dummy_file.py
     touch /tmp/some/e2e-pw/e2e_spec.js
-    export E2E_PATH="/tmp/some"
+    export SANITIZE_E2E_PATH="/tmp/some"
     pushd /tmp/some/
     run_test "No path found" "Some random input" "." "No path found"
     run_test "File not found" "/absolute/path/to/file" "." "default|/absolute/path/to/file|File not found"

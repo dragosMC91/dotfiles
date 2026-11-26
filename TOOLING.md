@@ -83,7 +83,7 @@ brew install tmux lazygit
   - **python3** — `brew install python3` (path normalization; falls back gracefully if missing).
   - An **editor CLI** — defaults to `cursor`; override with `EDITOR_CMD` (`code`, `subl`, …). See §5.
   - **Helium** browser — URLs are opened with `open -a "Helium"`. Install it, or edit the script to use your browser (e.g. `Safari`, `Google Chrome`).
-  - **`E2E_PATH`** — export it to the maple frontend checkout (e.g. `export E2E_PATH="$HOME/Documents/maple/frontend"`) so `e2e-pw/...` paths in test output resolve from any pane. The repo's `shell/.zshrc` does not set it.
+  - **`SANITIZE_E2E_PATH`** — export it to the maple frontend checkout (e.g. `export SANITIZE_E2E_PATH="$HOME/Documents/maple/frontend"`) so `e2e-pw/...` paths in test output resolve from any pane. The repo's `shell/.zshrc` does not set it.
   - URLs, images, documents and media are opened with macOS `open`, so only code files open on Linux.
 
 ## 5. Editor CLI — Cursor / VS Code
@@ -220,7 +220,7 @@ directories (e.g. `~/bin`) are created. The shell configs (`.zshrc`, `.p10k.zsh`
 The installed items need:
 
 - **tmux config** — `tmux` (and `lazygit` for `prefix + g`).
-- **process_path.sh** — `python3`, an editor CLI (§5) and `E2E_PATH` (§4). Only code files open.
+- **process_path.sh** — `python3`, an editor CLI (§5) and `SANITIZE_E2E_PATH` (§4). Only code files open.
 - **wf-cli** — `uv`, `git`, `gh` and `zsh` (see `scripts/wf-cli.md`). The `env -S` shebang needs coreutils 8.30+.
 - **tokenmaxx** — `tmux` and an authenticated `claude`. There is no LaunchAgent on Linux, so nothing starts the loop.
 

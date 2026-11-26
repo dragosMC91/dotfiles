@@ -32,7 +32,7 @@ This script can be tested independently, so ideally add unit tests for it.
 ```sh
 export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
 export CI_PREFIX="/home/runner/_work/repo/repo/"
-export E2E_PATH="/Users/myuser/Documents/maple/"
+export SANITIZE_E2E_PATH="/Users/myuser/Documents/maple/"
 sanitized=$(/Users/myuser/.nvm/versions/node/v20.10.0/bin/node /usr/local/bin/sanitize_and_open.js "$1" 2>> /tmp/automator-debug.log)
 echo "Sanitized: $sanitized" >> /tmp/automator-debug.log 2>&1
 cursor -g "$sanitized" >> /tmp/automator-debug.log 2>&1 &
@@ -46,7 +46,7 @@ This is needed because otherwise Automator doesn't have permissions to access th
 
 The export PATH line ensures cursor is found (Automator runs with a minimal PATH).
 
-`CI_PREFIX` is the CI checkout path to replace (e.g. `/home/runner/_work/repo/repo/` on GitHub Actions runners) and `E2E_PATH` is the local prefix it maps onto (customize to your checkout). Both are plain strings, not patterns. They **must** be exported inside this script — Automator runs a non-interactive, non-login shell that never sources `~/.zshrc`, so an export there won't reach it. Put it in `~/.zshenv` instead if you want it available to every zsh invocation.
+`CI_PREFIX` is the CI checkout path to replace (e.g. `/home/runner/_work/repo/repo/` on GitHub Actions runners) and `SANITIZE_E2E_PATH` is the local prefix it maps onto (customize to your checkout). Both are plain strings, not patterns. They **must** be exported inside this script — Automator runs a non-interactive, non-login shell that never sources `~/.zshrc`, so an export there won't reach it. Put it in `~/.zshenv` instead if you want it available to every zsh invocation.
 - Save the Quick Action with a name like Open in Cursor
 
 3. Assign a Keyboard Shortcut

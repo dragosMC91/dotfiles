@@ -4,9 +4,9 @@ const CI_PREFIX = process.env.CI_PREFIX;
 if (!CI_PREFIX) {
   throw new Error('CI_PREFIX is not set');
 }
-const LOCAL_PREFIX = process.env.E2E_PATH;
+const LOCAL_PREFIX = process.env.SANITIZE_E2E_PATH;
 if (!LOCAL_PREFIX) {
-  throw new Error('E2E_PATH is not set');
+  throw new Error('SANITIZE_E2E_PATH is not set');
 }
 
 function sanitize(text) {

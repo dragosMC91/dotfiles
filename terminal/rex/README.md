@@ -54,6 +54,13 @@ Both actions are also in the command palette (`shift+cmd+p`).
   reads the clipboard. Asking the app to copy first needs **Settings › General
   › Remote Control** on, and still gave an empty clipboard.
 
+## Sessions
+
+`start_rex.sh` is the Rex version of `tmux/scripts/start_tmux.sh`: the same
+sessions, tabs, working directories and setup commands. It skips any session
+that already exists. The one in this repo is a generic example, edit it for
+your own sessions.
+
 ## No Rex equivalent
 
 - `adjust-cursor-thickness`, `adjust-cursor-height`

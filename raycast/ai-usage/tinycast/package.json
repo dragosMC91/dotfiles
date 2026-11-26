@@ -1,0 +1,37 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "ai-usage",
+  "title": "AI Usage",
+  "description": "Live Claude Code and Codex usage (today's cost · 5h · 7d) as command subtitles. Thin wrapper around ../claude-usage.sh and ../codex-usage.sh.",
+  "icon": "claude-logo.png",
+  "author": "local",
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "claude",
+      "title": "Claude",
+      "description": "Claude Code usage: today's cost · 5-hour window · 7-day window",
+      "mode": "no-view",
+      "interval": "5m",
+      "icon": "claude-logo.png"
+    },
+    {
+      "name": "codex",
+      "title": "Codex",
+      "description": "Codex usage: today's cost · 5-hour window · 7-day window",
+      "mode": "no-view",
+      "interval": "5m",
+      "icon": "codex-logo.png"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "scriptsFolder",
+      "type": "textfield",
+      "required": false,
+      "title": "Scripts folder",
+      "description": "Folder containing claude-usage.sh and codex-usage.sh",
+      "default": "~/Documents/dotfiles/raycast/ai-usage"
+    }
+  ]
+}

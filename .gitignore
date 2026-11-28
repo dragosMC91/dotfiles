@@ -1,0 +1,2 @@
+# Local-only tooling; never commit.
+scripts/pw-cli/

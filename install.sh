@@ -165,6 +165,54 @@ install_sanitize_and_open() {
     fi
 }
 
+# MesloLGS NF (used by Cursor and Ghostty). Each file is downloaded to a temp file
+# first, so an interrupted download doesn't leave a broken font behind.
+install_meslo_font() {
+    local font_dir="$HOME/Library/Fonts" style file tmp
+    mkdir -p "$font_dir"
+    for style in "Regular" "Bold" "Italic" "Bold Italic"; do
+        file="MesloLGS NF ${style}.ttf"
+        if [ -f "$font_dir/$file" ]; then
+            printf "${GREEN}Already installed:${RESET} %s\n" "$file"
+            continue
+        fi
+        tmp="$(mktemp)"
+        if curl -fsSL -o "$tmp" "https://github.com/romkatv/powerlevel10k-media/raw/master/${file// /%20}"; then
+            chmod 644 "$tmp"
+            mv "$tmp" "$font_dir/$file"
+            printf "${GREEN}Installed font:${RESET} %s\n" "$file"
+        else
+            rm -f "$tmp"
+            printf "${YELLOW}Warning:${RESET} failed to download %s\n" "$file"
+        fi
+    done
+}
+
+# Copied, not symlinked: Cursor rewrites settings.json when a setting is changed in
+# the UI, and machine-specific entries (e.g. SSH hosts) shouldn't land in this repo.
+install_cursor() {
+    local cursor_cli="/Applications/Cursor.app/Contents/Resources/app/bin/code"
+    local user_dir="$HOME/Library/Application Support/Cursor/User"
+    local ext
+
+    safe_copy "$SCRIPT_DIR/cursor/settings.json" "$user_dir/settings.json"
+    safe_copy "$SCRIPT_DIR/cursor/keybindings.json" "$user_dir/keybindings.json"
+    install_meslo_font
+
+    if [ ! -x "$cursor_cli" ]; then
+        printf "${YELLOW}Warning:${RESET} Cursor not found in /Applications; skipping extensions\n"
+        return 1
+    fi
+    while IFS= read -r ext; do
+        case "$ext" in ''|\#*) continue ;; esac
+        if "$cursor_cli" --install-extension "$ext" >/dev/null 2>&1; then
+            printf "${GREEN}Extension:${RESET} %s\n" "$ext"
+        else
+            printf "${YELLOW}Warning:${RESET} failed to install extension %s\n" "$ext"
+        fi
+    done < "$SCRIPT_DIR/cursor/extensions.txt"
+}
+
 install_tokenmaxx() {
     safe_copy "$SCRIPT_DIR/scripts/tokenmaxx-loop.sh" ~/bin/tokenmaxx-loop.sh
     if is_macos; then
@@ -184,6 +232,7 @@ add_item install_start_tmux "start_tmux.sh"
 add_item install_wf_cli "wf-cli (~/bin)"
 add_item install_ghostty "Ghostty config"
 if is_macos; then
+    add_item install_cursor "Cursor settings, keybindings, extensions + MesloLGS NF font"
     add_item install_sanitize_and_open "sanitize_and_open.js (Automator, /usr/local/bin)"
     add_item install_tokenmaxx "tokenmaxx loop + launch agent"
 else

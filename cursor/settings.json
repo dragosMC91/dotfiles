@@ -1,0 +1,92 @@
+{
+    "editor.fontSize": 20,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": "active",
+    "[javascript]": {},
+    "terminal.integrated.fontSize": 20,
+    "terminal.integrated.cursorStyle": "underline",
+    "path-intellisense.extensionOnImport": true,
+    "path-intellisense.mappings": {
+        "/": "${workspaceRoot}"
+    },
+    "editor.largeFileOptimizations": true,
+    // Performance: don't watch generated folders in ANY repo (merges with repo-level settings)
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/.claude/worktrees/**": true,
+        "**/.cursor/worktrees/**": true,
+        "**/.venv/**": true,
+        "**/venv/**": true,
+        "**/__pycache__/**": true,
+        "**/.mypy_cache/**": true,
+        "**/.ruff_cache/**": true,
+        "**/.pytest_cache/**": true,
+        "**/.tox/**": true,
+        "**/.cache/**": true,
+        "**/.turbo/**": true,
+        "**/.next/**": true,
+        "**/.nuxt/**": true,
+        "**/coverage/**": true,
+        "**/.gradle/**": true,
+        "**/.terraform/**": true
+    },
+    "gitlens.gitkraken.mcp.autoEnabled": false,
+    "editor.suggestSelection": "first",
+    "extensions.ignoreRecommendations": true,
+    "extensions.autoUpdate": false,
+    "javascript.updateImportsOnFileMove.enabled": "never",
+    "typescript.tsserver.maxTsServerMemory": 6144,
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook"
+    },
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left"
+    },
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    },
+    "json.maxItemsComputed": 10000,
+    "diffEditor.renderSideBySide": true,
+    "debug.javascript.autoAttachFilter": "disabled",
+    "terminal.integrated.defaultProfile.osx": "zsh",
+    "css.completion.triggerPropertyValueCompletion": false,
+    "editor.fontFamily": "MesloLGS NF",
+    "[python]": {
+        "editor.formatOnType": true,
+        "files.trimTrailingWhitespace": true
+    },
+    "editor.accessibilitySupport": "off",
+    "diffEditor.ignoreTrimWhitespace": false,
+    "window.zoomLevel": 1,
+    "settingsSync.ignoredSettings": [
+        "terminal.external.osxExec"
+    ],
+    "terminal.explorerKind": "external",
+    "workbench.colorTheme": "Default Dark Modern",
+    "[dockercompose]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.autoIndent": "advanced",
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": false,
+            "strings": true
+        },
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "[github-actions-workflow]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "cursor.composer.textSizeScale": 1.15,
+    "claudeCode.preferredLocation": "panel",
+    "window.autoDetectColorScheme": false,
+    "[yaml]": {
+        "diffEditor.ignoreTrimWhitespace": false
+    },
+    "yaml.disableSchemaDetection": []
+}

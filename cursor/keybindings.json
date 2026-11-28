@@ -1,0 +1,49 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+        "key": "alt+cmd+c",
+        "command": "filebunny.copyAbsoluteFilePath"
+    },
+    {
+        "key": "cmd+r cmd+r",
+        "command": "workbench.action.files.revealActiveFileInWindows"
+    },
+    {
+        "key": "cmd+r r",
+        "command": "-workbench.action.files.revealActiveFileInWindows"
+    },
+    {
+        "key": "shift+cmd+x",
+        "command": "filebunny.copyFileName"
+    },
+    {
+        "key": "shift+cmd+r",
+        "command": "revealFileInOS",
+        "when": "editorFocus"
+    },
+    {
+        "key": "alt+cmd+r",
+        "command": "-revealFileInOS",
+        "when": "!editorFocus"
+    },
+    {
+        "key": "shift+cmd+c",
+        "command": "copyRelativeFilePath",
+        "when": "editorFocus"
+    },
+    {
+        "key": "cmd+r shift+alt+cmd+c",
+        "command": "-copyRelativeFilePath",
+        "when": "editorFocus"
+    },
+    {
+        "key": "shift+cmd+c",
+        "command": "copyRelativeFilePath",
+        "when": "!editorFocus"
+    },
+    {
+        "key": "shift+alt+cmd+c",
+        "command": "-copyRelativeFilePath",
+        "when": "!editorFocus"
+    }
+]

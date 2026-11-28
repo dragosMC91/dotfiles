@@ -1,0 +1,13 @@
+# Cursor extensions installed by install.sh (one ID per line).
+anthropic.claude-code
+anysphere.remote-containers
+anysphere.remote-ssh
+christian-kohler.npm-intellisense
+christian-kohler.path-intellisense
+eamodio.gitlens
+esbenp.prettier-vscode
+redhat.vscode-yaml
+robole.file-bunny
+shd101wyy.markdown-preview-enhanced
+streetsidesoftware.code-spell-checker
+waderyan.gitblame

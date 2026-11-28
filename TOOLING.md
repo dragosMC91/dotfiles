@@ -97,6 +97,23 @@ brew install --cask cursor      # or: brew install --cask visual-studio-code
 Then install the shell command: in Cursor/VS Code run **Cmd+Shift+P → "Install 'cursor'/'code' command in PATH"**.
 To use VS Code instead of Cursor, set `export EDITOR_CMD="code"`.
 
+### Cursor config (`cursor/*`)
+
+`install.sh` copies `cursor/settings.json` and `cursor/keybindings.json` into
+`~/Library/Application Support/Cursor/User/`, installs the extensions listed in `cursor/extensions.txt`,
+and downloads the MesloLGS NF font. Install Cursor first; the CLI is called from inside the app, so it
+doesn't need to be on `PATH`. The files are copied, not symlinked, so settings changed in Cursor's UI
+don't flow back here: copy them back by hand, without machine-specific entries such as `remote.SSH.*` hosts.
+
+`settings.json` also includes a `files.watcherExclude` list (caches, virtualenvs, agent worktrees) that cuts
+Cursor's file-watching work in large repos.
+
+A few things live in Cursor's app state rather than in files, so set them by hand in **Cursor Settings** (`Cmd+Shift+J`):
+
+- **Appearance:** theme **Cursor Dark** (the editor theme, Default Dark Modern, comes from `settings.json`).
+- **General:** Privacy Mode on.
+- **Layout:** Agents layout with the agents list on the right; bottom panel hidden (`Cmd+J`).
+
 ## 6. Node.js — for `scripts/sanitize_and_open.js`
 
 The sanitize script runs under Node. Install via nvm (already installed in §2):
@@ -204,6 +221,7 @@ the menu is skipped and everything is installed.
 | start_tmux.sh | symlinks `~/start_tmux.sh` | macOS, Linux |
 | wf-cli | symlinks `~/bin/wf-cli` (the `wf-ci` link and `.zshrc` line from `scripts/wf-cli.md` stay manual) | macOS, Linux |
 | Ghostty | symlinks the config into `~/Library/Application Support/com.mitchellh.ghostty/` | macOS |
+| Cursor | copies `settings.json` and `keybindings.json` into `~/Library/Application Support/Cursor/User/`, installs `cursor/extensions.txt` and the MesloLGS NF font | macOS |
 | sanitize_and_open | copies `sanitize_and_open.js` to `/usr/local/bin` (uses `sudo` if not writable) | macOS |
 | tokenmaxx | copies `~/bin/tokenmaxx-loop.sh`; on macOS also installs and loads the LaunchAgent | macOS, Linux |
 
